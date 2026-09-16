@@ -4,11 +4,14 @@ const DEPARTMENTS = [
   'Atendimento',
   'Conteúdo',
   'Criação',
+  'Eventos',
   'Finalização',
   'Mídia',
   'Planejamento',
-  'Produção Gráfica',
+  'Produção Grafica',
   'RTVC',
+  'WDI',
+  'WDI/BI',
 ];
 
 function toInputValue(date: Date): string {

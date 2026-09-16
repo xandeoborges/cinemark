@@ -35,8 +35,10 @@ dashboards do workspace: we-trafego, we-criacao, we-rtvc, wedash-central).
     aceito pelo usuário — não é um bug a corrigir depois.
 - `RequestTypeClassificationName` já vem pronta para refações:
   `'Ajuste externo'` (cliente), `'Ajuste interno'`, `'Solicitação padrão'`.
-- `FunctionGroupName` = departamento (Atendimento, Conteúdo, Criação,
-  Finalização, Mídia, Planejamento, Produção Gráfica, RTVC).
+- `FunctionGroupName` = departamento. Lista completa confirmada em produção
+  (11 valores, incluindo a grafia real sem acento em "Grafica"):
+  Atendimento, Conteúdo, Criação, Eventos, Finalização, Mídia, Planejamento,
+  Produção Grafica, RTVC, WDI, WDI/BI.
   `GroupName` = equipe/squad dentro do departamento.
 - A API REST do Supabase limita 1000 linhas por request — o fetch client-side
   precisa paginar com `.range()`.
