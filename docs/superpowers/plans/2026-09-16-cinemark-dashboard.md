@@ -1443,11 +1443,24 @@ describe('reworkTrend', () => {
     const facts = [
       fact({ taskCreationDate: '2026-08-05T00:00:00Z', requestTypeClassificationName: 'Ajuste externo' }),
       fact({ taskCreationDate: '2026-08-20T00:00:00Z', requestTypeClassificationName: 'Ajuste interno' }),
-      fact({ taskCreationDate: '2026-09-01T12:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
+      fact({ taskCreationDate: '2026-09-15T12:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
     ];
     expect(reworkTrend(facts)).toEqual([
       { month: '2026-08', externalCount: 1, internalCount: 1, standardCount: 0 },
       { month: '2026-09', externalCount: 0, internalCount: 0, standardCount: 1 },
+    ]);
+  });
+
+  test('applies the America/Sao_Paulo offset at a month boundary, not UTC', () => {
+    // 2026-09-01T01:00:00Z is 2026-08-31T22:00 in America/Sao_Paulo (UTC-3):
+    // still August locally, even though the UTC calendar date is already September.
+    // A UTC-hardcoded implementation would wrongly bucket this fact into September.
+    const facts = [
+      fact({ taskCreationDate: '2026-08-05T00:00:00Z', requestTypeClassificationName: 'Ajuste externo' }),
+      fact({ taskCreationDate: '2026-09-01T01:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
+    ];
+    expect(reworkTrend(facts)).toEqual([
+      { month: '2026-08', externalCount: 1, internalCount: 0, standardCount: 1 },
     ]);
   });
 });
@@ -1558,7 +1571,7 @@ export function reworkTrend(facts: TaskFacts[]): MonthlyReworkTrend[] {
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/user/antigravity/cinemark && bun test src/lib/reworkMetrics.test.ts`
-Expected: PASS (6 tests).
+Expected: PASS (7 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -1643,12 +1656,23 @@ describe('deliveriesOverTime', () => {
     const rows = [
       delivery({ CreationDate: '2026-08-05T00:00:00Z', Quantity: 2 }),
       delivery({ CreationDate: '2026-08-20T00:00:00Z', Quantity: 3 }),
-      delivery({ CreationDate: '2026-09-01T12:00:00Z', Quantity: 1 }),
+      delivery({ CreationDate: '2026-09-15T12:00:00Z', Quantity: 1 }),
     ];
     expect(deliveriesOverTime(rows)).toEqual([
       { month: '2026-08', totalQuantity: 5 },
       { month: '2026-09', totalQuantity: 1 },
     ]);
+  });
+
+  test('applies the America/Sao_Paulo offset at a month boundary, not UTC', () => {
+    // 2026-09-01T01:00:00Z is 2026-08-31T22:00 in America/Sao_Paulo (UTC-3):
+    // still August locally, even though the UTC calendar date is already September.
+    // A UTC-hardcoded implementation would wrongly bucket this row into September.
+    const rows = [
+      delivery({ CreationDate: '2026-08-05T00:00:00Z', Quantity: 2 }),
+      delivery({ CreationDate: '2026-09-01T01:00:00Z', Quantity: 1 }),
+    ];
+    expect(deliveriesOverTime(rows)).toEqual([{ month: '2026-08', totalQuantity: 3 }]);
   });
 });
 
@@ -1760,7 +1784,7 @@ export function deliveriesByDepartment(
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/user/antigravity/cinemark && bun test src/lib/deliveryMetrics.test.ts`
-Expected: PASS (6 tests).
+Expected: PASS (7 tests).
 
 - [ ] **Step 5: Commit**
 

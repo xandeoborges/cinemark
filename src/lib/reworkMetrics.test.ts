@@ -77,11 +77,24 @@ describe('reworkTrend', () => {
     const facts = [
       fact({ taskCreationDate: '2026-08-05T00:00:00Z', requestTypeClassificationName: 'Ajuste externo' }),
       fact({ taskCreationDate: '2026-08-20T00:00:00Z', requestTypeClassificationName: 'Ajuste interno' }),
-      fact({ taskCreationDate: '2026-09-01T12:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
+      fact({ taskCreationDate: '2026-09-15T12:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
     ];
     expect(reworkTrend(facts)).toEqual([
       { month: '2026-08', externalCount: 1, internalCount: 1, standardCount: 0 },
       { month: '2026-09', externalCount: 0, internalCount: 0, standardCount: 1 },
+    ]);
+  });
+
+  test('applies the America/Sao_Paulo offset at a month boundary, not UTC', () => {
+    // 2026-09-01T01:00:00Z is 2026-08-31T22:00 in America/Sao_Paulo (UTC-3):
+    // still August locally, even though the UTC calendar date is already September.
+    // A UTC-hardcoded implementation would wrongly bucket this fact into September.
+    const facts = [
+      fact({ taskCreationDate: '2026-08-05T00:00:00Z', requestTypeClassificationName: 'Ajuste externo' }),
+      fact({ taskCreationDate: '2026-09-01T01:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
+    ];
+    expect(reworkTrend(facts)).toEqual([
+      { month: '2026-08', externalCount: 1, internalCount: 0, standardCount: 1 },
     ]);
   });
 });
