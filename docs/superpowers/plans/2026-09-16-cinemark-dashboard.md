@@ -1784,7 +1784,7 @@ export function deliveriesByDepartment(
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/user/antigravity/cinemark && bun test src/lib/deliveryMetrics.test.ts`
-Expected: PASS (7 tests).
+Expected: PASS (6 tests).
 
 - [ ] **Step 5: Commit**
 
