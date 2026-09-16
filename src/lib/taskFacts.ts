@@ -9,12 +9,34 @@ export interface TaskFacts {
   requestTypeName: string | null;
 }
 
+function dateCalendarTime(row: TaskChangeRow): number {
+  if (!row.DateCalendar) return -Infinity;
+  const time = new Date(row.DateCalendar).getTime();
+  return Number.isNaN(time) ? -Infinity : time;
+}
+
 export function taskFactsByTaskId(rows: TaskChangeRow[]): Map<string, TaskFacts> {
-  const facts = new Map<string, TaskFacts>();
+  const latestRowByTaskId = new Map<string, TaskChangeRow>();
   for (const row of rows) {
-    if (!row.TaskID || facts.has(row.TaskID)) continue;
-    facts.set(row.TaskID, {
-      taskId: row.TaskID,
+    if (!row.TaskID) continue;
+    const existing = latestRowByTaskId.get(row.TaskID);
+    if (!existing) {
+      latestRowByTaskId.set(row.TaskID, row);
+      continue;
+    }
+    const existingTime = dateCalendarTime(existing);
+    const rowTime = dateCalendarTime(row);
+    const rowWins =
+      rowTime > existingTime || (rowTime === existingTime && row.RowID > existing.RowID);
+    if (rowWins) {
+      latestRowByTaskId.set(row.TaskID, row);
+    }
+  }
+
+  const facts = new Map<string, TaskFacts>();
+  for (const [taskId, row] of latestRowByTaskId) {
+    facts.set(taskId, {
+      taskId,
       taskNumber: row.TaskNumber,
       taskCreationDate: row.TaskCreationDate,
       taskClosingDate: row.TaskClosingDate,
