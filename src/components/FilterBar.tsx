@@ -56,6 +56,7 @@ export function FilterBar() {
           onChange={(event) => {
             const end = parseInputValue(event.target.value);
             if (!end) return;
+            end.setHours(23, 59, 59, 999);
             setDateRange({ ...filters.dateRange, end });
           }}
         />
