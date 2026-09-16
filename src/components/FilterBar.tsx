@@ -1,4 +1,5 @@
 import { useFilters } from '@/context/FiltersContext';
+import { startOfDayInSaoPaulo, endOfDayInSaoPaulo } from '@/lib/dateRange';
 
 const DEPARTMENTS = [
   'Atendimento',
@@ -14,19 +15,33 @@ const DEPARTMENTS = [
   'WDI/BI',
 ];
 
+// Renders a Date (a Sao Paulo instant) back into the <input type="date">
+// value as the calendar day it represents IN Sao Paulo, independent of the
+// browser's own timezone.
 function toInputValue(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return formatter.format(date);
 }
 
-function parseInputValue(value: string): Date | null {
+interface ParsedYMD {
+  year: number;
+  month: number;
+  day: number;
+}
+
+// Parses the Y-M-D typed into a date input. Does not construct a Date itself
+// (that would tie the result to the browser's local timezone) — callers pick
+// start-of-day or end-of-day in Sao Paulo via dateRange.ts's helpers.
+function parseInputValue(value: string): ParsedYMD | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
   const [, year, month, day] = match;
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
-  return Number.isNaN(date.getTime()) ? null : date;
+  return { year: Number(year), month: Number(month), day: Number(day) };
 }
 
 export function FilterBar() {
@@ -41,8 +56,9 @@ export function FilterBar() {
           className="rounded-md border border-border bg-background px-2 py-1 text-foreground"
           value={toInputValue(filters.dateRange.start)}
           onChange={(event) => {
-            const start = parseInputValue(event.target.value);
-            if (!start) return;
+            const parsed = parseInputValue(event.target.value);
+            if (!parsed) return;
+            const start = startOfDayInSaoPaulo(parsed.year, parsed.month, parsed.day);
             setDateRange({ ...filters.dateRange, start });
           }}
         />
@@ -54,9 +70,9 @@ export function FilterBar() {
           className="rounded-md border border-border bg-background px-2 py-1 text-foreground"
           value={toInputValue(filters.dateRange.end)}
           onChange={(event) => {
-            const end = parseInputValue(event.target.value);
-            if (!end) return;
-            end.setHours(23, 59, 59, 999);
+            const parsed = parseInputValue(event.target.value);
+            if (!parsed) return;
+            const end = endOfDayInSaoPaulo(parsed.year, parsed.month, parsed.day);
             setDateRange({ ...filters.dateRange, end });
           }}
         />

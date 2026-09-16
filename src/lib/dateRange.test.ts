@@ -1,5 +1,11 @@
 import { describe, test, expect } from 'bun:test';
-import { monthBucket, isWithinRange, filterByDateRange } from './dateRange';
+import {
+  monthBucket,
+  isWithinRange,
+  filterByDateRange,
+  startOfDayInSaoPaulo,
+  endOfDayInSaoPaulo,
+} from './dateRange';
 import type { DateRange } from './dateRange';
 
 describe('monthBucket', () => {
@@ -28,6 +34,18 @@ describe('isWithinRange', () => {
 
   test('returns false for a null date', () => {
     expect(isWithinRange(null, range)).toBe(false);
+  });
+});
+
+describe('startOfDayInSaoPaulo', () => {
+  test('returns the UTC instant for 00:00:00.000 in Sao Paulo (UTC-3)', () => {
+    expect(startOfDayInSaoPaulo(2026, 9, 16)).toEqual(new Date('2026-09-16T03:00:00.000Z'));
+  });
+});
+
+describe('endOfDayInSaoPaulo', () => {
+  test('returns the UTC instant for 23:59:59.999 in Sao Paulo (UTC-3, next UTC day)', () => {
+    expect(endOfDayInSaoPaulo(2026, 9, 16)).toEqual(new Date('2026-09-17T02:59:59.999Z'));
   });
 });
 

@@ -1,14 +1,27 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
-import type { DateRange } from '@/lib/dateRange';
+import { startOfDayInSaoPaulo, endOfDayInSaoPaulo, type DateRange } from '@/lib/dateRange';
+
+// Determines "today" as a calendar day in America/Sao_Paulo, independent of
+// the browser's own timezone (important for CI or a user abroad).
+function todayInSaoPaulo(): { year: number; month: number; day: number } {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const [year, month, day] = formatter.format(new Date()).split('-').map(Number);
+  return { year, month, day };
+}
 
 function startOfCurrentMonth(): Date {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1);
+  const { year, month } = todayInSaoPaulo();
+  return startOfDayInSaoPaulo(year, month, 1);
 }
 
 function endOfToday(): Date {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  const { year, month, day } = todayInSaoPaulo();
+  return endOfDayInSaoPaulo(year, month, day);
 }
 
 export interface FiltersState {
