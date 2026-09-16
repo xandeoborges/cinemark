@@ -9,6 +9,7 @@ async function fetchTaskRows(): Promise<TaskChangeRow[]> {
       .from('requesttypechange')
       .select('*')
       .eq('ClientDisplayName', 'Cinemark')
+      .order('RowID', { ascending: true })
       .range(from, to);
     return {
       data: response.data,

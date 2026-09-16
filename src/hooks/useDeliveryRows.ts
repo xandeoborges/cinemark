@@ -9,6 +9,7 @@ async function fetchDeliveryRows(): Promise<DeliveryRow[]> {
       .from('requestdelivery')
       .select('*')
       .eq('ClientDisplayName', 'Cinemark')
+      .order('RequestDeliveryID', { ascending: true })
       .range(from, to);
     return {
       data: response.data,
