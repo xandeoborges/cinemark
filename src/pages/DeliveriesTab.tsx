@@ -47,7 +47,10 @@ export function DeliveriesTab() {
   const byType = deliveriesByType(scoped);
   const byEffortGroup = deliveriesByEffortGroup(scoped);
   const overTime = deliveriesOverTime(scoped);
-  const byDepartment = deliveriesByDepartment(scoped, departmentMap);
+  const byDepartmentUnfiltered = deliveriesByDepartment(scoped, departmentMap);
+  const byDepartment = filters.department
+    ? byDepartmentUnfiltered.filter((item) => item.department === filters.department)
+    : byDepartmentUnfiltered;
   const totalQuantity = byType.reduce((sum, item) => sum + item.totalQuantity, 0);
 
   return (
