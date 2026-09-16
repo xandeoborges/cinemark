@@ -15,7 +15,18 @@ const DEPARTMENTS = [
 ];
 
 function toInputValue(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseInputValue(value: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return null;
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 export function FilterBar() {
@@ -30,7 +41,8 @@ export function FilterBar() {
           className="rounded-md border border-border bg-background px-2 py-1 text-foreground"
           value={toInputValue(filters.dateRange.start)}
           onChange={(event) => {
-            const start = new Date(event.target.value);
+            const start = parseInputValue(event.target.value);
+            if (!start) return;
             setDateRange({ ...filters.dateRange, start });
           }}
         />
@@ -42,7 +54,8 @@ export function FilterBar() {
           className="rounded-md border border-border bg-background px-2 py-1 text-foreground"
           value={toInputValue(filters.dateRange.end)}
           onChange={(event) => {
-            const end = new Date(event.target.value);
+            const end = parseInputValue(event.target.value);
+            if (!end) return;
             setDateRange({ ...filters.dateRange, end });
           }}
         />
