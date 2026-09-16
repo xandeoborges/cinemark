@@ -79,7 +79,7 @@ export interface MonthlyReworkTrend {
 export function reworkTrend(facts: TaskFacts[]): MonthlyReworkTrend[] {
   const byMonth = new Map<string, MonthlyReworkTrend>();
   for (const fact of facts) {
-    const month = monthBucket(fact.taskCreationDate, 'UTC');
+    const month = monthBucket(fact.taskCreationDate);
     if (!month) continue;
     const entry = byMonth.get(month) ?? { month, externalCount: 0, internalCount: 0, standardCount: 0 };
     const classification = classifyRework(fact.requestTypeClassificationName);

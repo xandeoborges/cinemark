@@ -1443,7 +1443,7 @@ describe('reworkTrend', () => {
     const facts = [
       fact({ taskCreationDate: '2026-08-05T00:00:00Z', requestTypeClassificationName: 'Ajuste externo' }),
       fact({ taskCreationDate: '2026-08-20T00:00:00Z', requestTypeClassificationName: 'Ajuste interno' }),
-      fact({ taskCreationDate: '2026-09-01T00:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
+      fact({ taskCreationDate: '2026-09-01T12:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
     ];
     expect(reworkTrend(facts)).toEqual([
       { month: '2026-08', externalCount: 1, internalCount: 1, standardCount: 0 },
@@ -1643,7 +1643,7 @@ describe('deliveriesOverTime', () => {
     const rows = [
       delivery({ CreationDate: '2026-08-05T00:00:00Z', Quantity: 2 }),
       delivery({ CreationDate: '2026-08-20T00:00:00Z', Quantity: 3 }),
-      delivery({ CreationDate: '2026-09-01T00:00:00Z', Quantity: 1 }),
+      delivery({ CreationDate: '2026-09-01T12:00:00Z', Quantity: 1 }),
     ];
     expect(deliveriesOverTime(rows)).toEqual([
       { month: '2026-08', totalQuantity: 5 },

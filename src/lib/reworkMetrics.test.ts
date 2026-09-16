@@ -77,7 +77,7 @@ describe('reworkTrend', () => {
     const facts = [
       fact({ taskCreationDate: '2026-08-05T00:00:00Z', requestTypeClassificationName: 'Ajuste externo' }),
       fact({ taskCreationDate: '2026-08-20T00:00:00Z', requestTypeClassificationName: 'Ajuste interno' }),
-      fact({ taskCreationDate: '2026-09-01T00:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
+      fact({ taskCreationDate: '2026-09-01T12:00:00Z', requestTypeClassificationName: 'Solicitação padrão' }),
     ];
     expect(reworkTrend(facts)).toEqual([
       { month: '2026-08', externalCount: 1, internalCount: 1, standardCount: 0 },
